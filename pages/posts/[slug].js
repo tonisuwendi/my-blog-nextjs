@@ -1,18 +1,34 @@
+import Head from 'next/head';
 import PropTypes from 'prop-types';
+import { Fragment } from 'react';
 
 import PostContent from '../../src/components/posts/postDetail/PostContent';
 import { getPostData, getPostsFiles } from '../../src/lib/posts-util';
 
 const DetailPostPage = ({ post }) => {
-    return <PostContent post={post} />;
+    return (
+        <Fragment>
+            <Head>
+                <title>{post.title}</title>
+                <meta name="description" content={post.excerpt} />
+            </Head>
+            <PostContent post={post} />
+        </Fragment>
+    );
 };
 
 DetailPostPage.propTypes = {
-    post: PropTypes.shape(),
+    post: PropTypes.shape({
+        title: PropTypes.string,
+        excerpt: PropTypes.string,
+    }),
 };
 
 DetailPostPage.defaultProps = {
-    post: {},
+    post: {
+        title: '',
+        excerpt: '',
+    },
 };
 
 export const getStaticProps = ({ params: { slug } }) => {

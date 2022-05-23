@@ -13,7 +13,7 @@ const Layout = ({ children }) => {
 };
 
 Layout.propTypes = {
-    children: PropTypes.element,
+    children: PropTypes.node,
 };
 
 Layout.defaultProps = {

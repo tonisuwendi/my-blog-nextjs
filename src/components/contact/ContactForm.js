@@ -1,15 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
+import Notification from '../ui/notification';
 import styles from './ContactForm.module.css';
 
 const ContactForm = () => {
     const [enteredEmail, setEnteredEmail] = useState('');
     const [enteredName, setEnteredName] = useState('');
     const [enteredMessage, setEnteredMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [notification, setNotification] = useState(null);
+
+    useEffect(() => {
+        let timer;
+        if (notification?.status !== 'pending') {
+            timer = setTimeout(() => {
+                setNotification(null);
+            }, 3000);
+        }
+        return () => clearTimeout(timer);
+    }, [notification]);
 
     const sendMessageHandler = async (event) => {
         event.preventDefault();
 
+        setLoading(true);
+        setNotification({
+            title: 'Sending message...',
+            message: 'Your message is on its way!',
+            status: 'pending',
+        });
         const inputData = {
             email: enteredEmail,
             name: enteredName,
@@ -24,13 +43,30 @@ const ContactForm = () => {
                 },
             });
             const data = await res.json();
-            console.log(data);
-            setEnteredEmail('');
-            setEnteredName('');
-            setEnteredMessage('');
+            if (!res.ok) {
+                throw new Error(data.message || 'Something went wrong!');
+            }
+            setNotification({
+                title: 'Success!',
+                message: 'Message send successfully!',
+                status: 'success',
+            });
+            resetFormHandler();
         } catch (error) {
-            console.log(error);
+            setNotification({
+                title: 'Error!',
+                message: error.message,
+                status: 'error',
+            });
+        } finally {
+            setLoading(false);
         }
+    };
+
+    const resetFormHandler = () => {
+        setEnteredEmail('');
+        setEnteredName('');
+        setEnteredMessage('');
     };
 
     return (
@@ -75,9 +111,18 @@ const ContactForm = () => {
                     ></textarea>
                 </div>
                 <div className={styles.actions}>
-                    <button type="submit">Send Message</button>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Loading...' : 'Send Message'}
+                    </button>
                 </div>
             </form>
+            {notification && (
+                <Notification
+                    title={notification.title}
+                    message={notification.message}
+                    status={notification.status}
+                />
+            )}
         </section>
     );
 };
