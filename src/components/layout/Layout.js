@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import MainNavigation from './mainNavigation';
+import MainNavigation from './MainNavigation';
 
 const Layout = ({ children }) => {
     return (

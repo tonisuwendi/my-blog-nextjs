@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import Notification from '../ui/notification';
+import Notification from '../ui/Notification';
 import styles from './ContactForm.module.css';
 
 const ContactForm = () => {
